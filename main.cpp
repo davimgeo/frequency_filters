@@ -5,6 +5,9 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <chrono>
+
+auto start = std::chrono::high_resolution_clock::now();
 
 /*
 Created 05/08/24 at 2:52 AM
@@ -59,6 +62,11 @@ int main()
     std::vector<complex> ifft_result = computeIFFT(fft_result);
 
     exportFFTResults(ifft_result, Nt, path + "ifft_result.txt");
+
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+ 
+    std::cout << "Runtine: " << duration.count() / 1e6 << " seconds" << "\n";
 
     return 0;
 }
