@@ -39,9 +39,12 @@ void exportFFTResults(const std::vector<complex>& fft_vector, int size, const st
 
 int main() 
 {
+    auto start = std::chrono::high_resolution_clock::now();
+    
     int Nt = 501;
     double dt = 0.001;
-    int fmax = 25;
+    double fmax = 25.0;
+    double cutoff_freq = 50.0;
 
     std::string path = "/home/davi/Desktop/coding_tests/frequency_filters/";
 
@@ -52,21 +55,33 @@ int main()
 
     exportFFTResults(fft_result, Nt, path + "fft_result.txt");
 
-    int cutoff_freq = 50;
-    std::vector<double> filter = lowPassFilter(cutoff_freq, Nt, 1 / dt);
+    int id = 0; // 0 - low pass filter; 1 - high pass filter
+
+    std::vector<double> filter;
+    switch(id) 
+    {
+        case 0:
+            filter = lowPassFilter(cutoff_freq, Nt, 1.0 / dt);
+            break;
+        case 1:
+            filter = highPassFilter(cutoff_freq, Nt, 1.0 / dt);
+            break;            
+    }
 
     applyLowPassFilter(fft_result, filter);
 
     exportFFTResults(fft_result, Nt, path + "filtered_fft_result.txt");
 
     std::vector<complex> ifft_result = computeIFFT(fft_result);
-
     exportFFTResults(ifft_result, Nt, path + "ifft_result.txt");
+
+    std::vector<double> parameters_vector = {static_cast<double>(Nt), dt, fmax, cutoff_freq};
+    exportFile(parameters_vector, path + "parameters_file.txt");
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
  
-    std::cout << "Runtine: " << duration.count() / 1e6 << " seconds" << "\n";
+    std::cout << "Runtime: " << duration.count() / 1e6 << " seconds" << "\n";
 
     return 0;
 }
