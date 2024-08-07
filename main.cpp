@@ -7,33 +7,33 @@
 #include <fstream>
 #include <chrono>
 
-auto start = std::chrono::high_resolution_clock::now();
-
-/*
-Created 05/08/24 at 2:52 AM
-
-@author: Davi Mendes
-*/
+enum FilterType 
+{
+    LOW_PASS,
+    HIGH_PASS,
+    BAND_PASS,
+    BAND_STOP
+};
 
 template <typename T>
 void exportFile(const std::vector<T>& file, const std::string& file_path) 
 {
     std::ofstream outfile(file_path);
     if (!outfile.is_open()) {
-        throw std::runtime_error("Could not open file. Please Verify the file Path.");
+        throw std::runtime_error("Could not open file. Please verify the file path.");
     }
     for (const auto& value : file) {
         outfile << value << "\n";
     }
 }
 
-void exportFFTResults(const std::vector<complex>& fft_vector, int size, const std::string& file_path) {
+void exportFFTResults(const std::vector<complex>& fft_vector, const std::string& file_path) {
     std::ofstream outfile(file_path);
     if (!outfile.is_open()) {
-        throw std::runtime_error("Could not open file. Please Verify the file Path.");
+        throw std::runtime_error("Could not open file. Please verify the file path.");
     }
-    for (int i = 0; i < size; ++i) {
-        outfile << fft_vector[i][REAL] << "," << fft_vector[i][IMAG] << "\n";
+    for (const auto& value : fft_vector) {
+        outfile << value[REAL] << "," << value[IMAG] << "\n";
     }
 }
 
@@ -44,7 +44,10 @@ int main()
     int Nt = 501;
     double dt = 0.001;
     double fmax = 25.0;
-    double cutoff_freq = 50.0;
+    double sampling_rate = 1.0 / dt;
+    double cutoff_freq = 40.0;
+    double lowcutoff_freq = 10.0;
+    double highcutoff_freq = 30.0;
 
     std::string path = "/home/davi/Desktop/coding_tests/frequency_filters/";
 
@@ -52,36 +55,40 @@ int main()
     exportFile(wavelet, path + "wavelet.txt");
 
     std::vector<complex> fft_result = computeFFT(wavelet);
+    exportFFTResults(fft_result, path + "fft_result.txt");
 
-    exportFFTResults(fft_result, Nt, path + "fft_result.txt");
-
-    int id = 0; // 0 - low pass filter; 1 - high pass filter
+    FilterType filterType = BAND_STOP;
 
     std::vector<double> filter;
-    switch(id) 
+    switch(filterType) 
     {
-        case 0:
-            filter = lowPassFilter(cutoff_freq, Nt, 1.0 / dt);
+        case LOW_PASS:
+            filter = lowPassFilter(cutoff_freq, Nt, sampling_rate);
             break;
-        case 1:
-            filter = highPassFilter(cutoff_freq, Nt, 1.0 / dt);
-            break;            
+        case HIGH_PASS:
+            filter = highPassFilter(cutoff_freq, Nt, sampling_rate);
+            break;
+        case BAND_PASS:
+            filter = bandPassFilter(lowcutoff_freq, highcutoff_freq, Nt, sampling_rate);
+        case BAND_STOP:
+            filter = bandStopFilter(lowcutoff_freq, highcutoff_freq, Nt, sampling_rate);
     }
 
-    applyLowPassFilter(fft_result, filter);
+    applyFilter(fft_result, filter);
 
-    exportFFTResults(fft_result, Nt, path + "filtered_fft_result.txt");
+    exportFFTResults(fft_result, path + "filtered_fft_result.txt");
 
     std::vector<complex> ifft_result = computeIFFT(fft_result);
-    exportFFTResults(ifft_result, Nt, path + "ifft_result.txt");
+    exportFFTResults(ifft_result, path + "ifft_result.txt");
 
-    std::vector<double> parameters_vector = {static_cast<double>(Nt), dt, fmax, cutoff_freq};
+    std::vector<double> parameters_vector = {static_cast<double>(Nt), dt, fmax, cutoff_freq, lowcutoff_freq, highcutoff_freq, static_cast<double>(filterType)};
     exportFile(parameters_vector, path + "parameters_file.txt");
 
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
- 
-    std::cout << "Runtime: " << duration.count() / 1e6 << " seconds" << "\n";
+
+    std::cout << "Runtime: " << duration.count() / 1e6 << " seconds\n";
 
     return 0;
 }
+

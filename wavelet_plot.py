@@ -15,6 +15,9 @@ Nt = parameters_file[0]
 dt = parameters_file[1]
 fmax = parameters_file[2]
 cutoff_frequency = parameters_file[3]
+lowcutoff_freq = parameters_file[4]
+highcutoff_freq = parameters_file[5]
+filter_type = parameters_file[6]
 
 # Creating a mask for Filtered FFT data
 real_part_filtered = filtered_fft_data[:, 0]
@@ -30,6 +33,12 @@ filtered_fft_abs = 2.0 * np.abs(filtered_fft_result / n2)
 # IFFT
 real_part_ifft = ifft_data[:, 0]
 
+# Defining label type
+if filter_type < 1:
+    freq_label = f"cut-off frequency = {cutoff_frequency} Hz\nfmax = {fmax} Hz"
+else:
+    freq_label = f"low-cut-off frequency = {lowcutoff_freq} Hz\nhigh-cut-off frequency = {highcutoff_freq} Hz\nfmax = {fmax} Hz"   
+
 # Plotting the results
 fig, ax = plt.subplots(nrows=3, ncols=1, figsize=(18, 10))
 
@@ -39,7 +48,7 @@ ax[0].set_title("Wavelet", fontsize=18)
 ax[0].set_xlabel("Time [s]", fontsize=15)
 
 # Plot Filtered FFT
-ax[1].plot(freq_2[mask_filtered_fft], filtered_fft_abs[mask_filtered_fft], label=f"cut-off frequency = {cutoff_frequency} Hz\nfmax = {fmax} Hz")
+ax[1].plot(freq_2[mask_filtered_fft], filtered_fft_abs[mask_filtered_fft], label=freq_label)
 ax[1].set_title("Filtered Wavelet Frequency Spectrum", fontsize=18)
 ax[1].set_xlabel("Frequency [Hz]", fontsize=15)
 ax[1].set_ylabel("Amplitude", fontsize=15)

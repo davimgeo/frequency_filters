@@ -6,6 +6,8 @@
 
 std::vector<double> lowPassFilter(int cutoff_freq, int fft_size, double sampling_rate);
 std::vector<double> highPassFilter(int cutoff_freq, int fft_size, double sampling_rate);
-void applyLowPassFilter(std::vector<complex>& fft_vec, const std::vector<double>& filter);
+std::vector<double> bandPassFilter(double lowcutoff_freq, double highcutoff_freq, int fft_size, double sampling_rate);
+std::vector<double> bandStopFilter(double lowcutoff_freq, double highcutoff_freq, int fft_size, double sampling_rate);
+void applyFilter(std::vector<complex>& fft_vec, const std::vector<double>& filter);
 
 #endif

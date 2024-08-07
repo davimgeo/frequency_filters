@@ -26,6 +26,7 @@ execute_cpp_file()
 
 execute_python_file()
 {
+    echo "Executing Python file..."
     python3 wavelet_plot.py
     if [ $? -ne 0 ]; then
         echo "Python file execution failed."
