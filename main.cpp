@@ -1,12 +1,10 @@
-#include <iostream>
-#include <vector>
-#include <fstream>
 #include "functions/complex_type.h"
 #include "functions/generate_wavelet.h"
 #include "functions/fft_algorithms.h"
-
-#define REAL 0
-#define IMAG 1
+#include "functions/frequency_filters.h"
+#include <iostream>
+#include <vector>
+#include <fstream>
 
 /*
 Created 05/08/24 at 2:52 AM
@@ -48,7 +46,19 @@ int main()
     exportFile(wavelet, path + "wavelet.txt");
 
     std::vector<complex> fft_result = computeFFT(wavelet);
+
     exportFFTResults(fft_result, Nt, path + "fft_result.txt");
+
+    int cutoff_freq = 35;
+    std::vector<double> filter = lowPassFilter(cutoff_freq, Nt, 1 / dt);
+
+    applyLowPassFilter(fft_result, filter);
+
+    exportFFTResults(fft_result, Nt, path + "filtered_fft_result.txt");
+
+    std::vector<complex> ifft_result = computeIFFT(fft_result);
+
+    exportFFTResults(ifft_result, Nt, path + "ifft_result.txt");
 
     return 0;
 }
