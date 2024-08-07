@@ -1,5 +1,5 @@
-#ifndef GENERATE_WAVELET_H
-#define GENERATE_WAVELET_H
+#ifndef GENERATE_WAVELET_HPP
+#define GENERATE_WAVELET_HPP
 
 #include <iostream>
 #include <vector>

@@ -1,5 +1,5 @@
-#ifndef COMPLEX_TYPES_H
-#define COMPLEX_TYPES_H
+#ifndef COMPLEX_TYPES_HPP
+#define COMPLEX_TYPES_HPP
 
 #include <array>
 

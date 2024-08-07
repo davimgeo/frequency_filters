@@ -1,7 +1,7 @@
-#include "functions/complex_type.h"
-#include "functions/generate_wavelet.h"
-#include "functions/fft_algorithms.h"
-#include "functions/frequency_filters.h"
+#include "functions/complex_type.hpp"
+#include "functions/generate_wavelet.hpp"
+#include "functions/fft_algorithms.hpp"
+#include "functions/frequency_filters.hpp"
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -52,7 +52,7 @@ int main()
 
     exportFFTResults(fft_result, Nt, path + "fft_result.txt");
 
-    int cutoff_freq = 35;
+    int cutoff_freq = 50;
     std::vector<double> filter = lowPassFilter(cutoff_freq, Nt, 1 / dt);
 
     applyLowPassFilter(fft_result, filter);

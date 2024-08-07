@@ -1,5 +1,5 @@
-#include "fft_algorithms.h"
-#include "complex_type.h"
+#include "fft_algorithms.hpp"
+#include "complex_type.hpp"
 #include <fftw3.h>
 
 std::vector<complex> computeFFT(const std::vector<double>& wavelet) {

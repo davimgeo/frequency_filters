@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "generate_wavelet.h"
+#include "generate_wavelet.hpp"
 
 std::vector<double> generateRickerWavelet(int Nt, double dt, int fmax) 
 {
