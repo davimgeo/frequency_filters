@@ -7,7 +7,13 @@
 #include <fstream>
 #include <chrono>
 
-enum FilterType 
+enum waveletType
+{
+    RICKER_WAVELET,
+    ORMSBY_WAVELET
+};
+
+enum filterType 
 {
     LOW_PASS,
     HIGH_PASS,
@@ -44,20 +50,33 @@ int main()
     int Nt = 501;
     double dt = 0.001;
     double fmax = 25.0;
+    std::vector<double> ormsby_freqs = {5.0, 10.0, 40.0, 45.0};
     double sampling_rate = 1.0 / dt;
-    double cutoff_freq = 40.0;
+    double cutoff_freq = 25.0;
     double lowcutoff_freq = 10.0;
     double highcutoff_freq = 30.0;
 
     std::string path = "/home/davi/Desktop/coding_tests/frequency_filters/";
 
-    std::vector<double> wavelet = generateRickerWavelet(Nt, dt, fmax);
+    waveletType waveletType = ORMSBY_WAVELET;
+
+    std::vector<double> wavelet;
+    switch(waveletType)
+    {
+    case RICKER_WAVELET:
+        wavelet = generateRickerWavelet(Nt, dt, fmax);
+        break;
+    case ORMSBY_WAVELET:
+        wavelet = generateOrmsbyWavelet(Nt, dt, ormsby_freqs);
+        break;
+    }
+
     exportFile(wavelet, path + "wavelet.txt");
 
     std::vector<complex> fft_result = computeFFT(wavelet);
     exportFFTResults(fft_result, path + "fft_result.txt");
 
-    FilterType filterType = BAND_STOP;
+    filterType filterType = BAND_STOP;
 
     std::vector<double> filter;
     switch(filterType) 

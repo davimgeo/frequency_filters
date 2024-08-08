@@ -5,5 +5,6 @@
 #include <vector>
 
 std::vector<double> generateRickerWavelet(int Nt, double dt, int fmax);
+std::vector<double> generateOrmsbyWavelet(int Nt, double dt, std::vector<double>& freqs);
 
 #endif
